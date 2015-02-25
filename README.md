@@ -56,6 +56,16 @@ client.request(params, function(err, xml, etree) {
 
 ```
 
+File attachments are supported, a request with a user-id mapping :
+
+```javascript
+var params = {
+    type: 'user-id',
+    action: 'set',
+    file: '/path/to/file'
+}
+```
+
 ## Installation
 
     $ npm install panxapi

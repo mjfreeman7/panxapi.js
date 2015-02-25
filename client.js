@@ -56,14 +56,33 @@ PanClient.prototype.keygen = function keygen(user, password, callback) {
 
 PanClient.prototype.request = function request(params, callback) {
   params.key = this.key
-  superagent
-  .post(this.url)
-  .type('form')
-  .send(params)
-  .buffer(true)
-  .on('error', callback)
-  .end(done)
 
+  // File upload included
+  if (params.file) {
+    var req = superagent
+    .post(this.url)
+    .type('form')
+    .attach('file', params.file)
+
+    // Params must be added as a field parameter (.send() does not work)
+    Object.keys(params).forEach(function(element, key, _array) {
+      req.field(_array[key], params[element]);
+    });
+
+    req.buffer(true)
+    req.on('error', callback)
+    req.end(done)
+  }
+  // No file included
+  else {
+    superagent
+    .post(this.url)
+    .type('form')
+    .send(params)
+    .buffer(true)
+    .on('error', callback)
+    .end(done)
+  }
   function done(res) {
     try {
       var etree = et.parse(res.text)
